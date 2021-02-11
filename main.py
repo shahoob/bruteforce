@@ -1,5 +1,5 @@
 import sys
-from filecmp import cmp
+# from filecmp import cmp
 from itertools import permutations
 from os import walk
 from zipfile import ZipFile
@@ -118,19 +118,7 @@ print('Finalizing...')
 for password in tqdm(temp_passwords):
     passwords.append(password)
 print('Finalized')
-print('Sorting list...')
-passwords.sort(key=len)
-print('Sorted')
 del temp_passwords
-
-
-def cmp(x: int or float, y: int or float):
-    if x < y:
-        return -1
-    if x == y:
-        return 0
-    if x > y:
-        return 1
 
 
 if not sys.argv.__contains__('--gen-only'):
