@@ -1,0 +1,8 @@
+site_name: bruteforce
+nav:
+  - Home: index.md
+  - Warning: warning.md
+  - Installation: install.md
+  - Usage: cli.md
+repo_url: https://github.com/shahoob/bruteforce
+copyright: © Copyright Shehab Tweel 2021

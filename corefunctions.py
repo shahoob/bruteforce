@@ -30,6 +30,7 @@ def crack(passwords: list[str] or tqdm, file: ZipFile):
     else:
         print('not found')
 
+
 '''
 def leftpop(_list: list):
     __list = _list[:]

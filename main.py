@@ -11,71 +11,9 @@ from tqdm import tqdm
 if not sys.argv.__contains__('--gen-only'):
     filename = input('Zip file name: ')
 
-'''
-charLists = [
-    'abcdefghijklmnopqrstuvwxyz!@#$%^&*()-=_+?><":{}|\][;\',./0123456789',
-    'abcdefghijklmnopqrstuvwxyz!@#0123456789'
-]
-charListName = ''
-'''
-passwords: list[str] = []
-'''
-maxletters = int(input('Number of max letters: '))
-filename = input('Zip file name: ')
-currentCharList = ''
-chosenCharList = input('Which character list: Complex (0, default), Simple (1), or Custom (custom)?: ')
-if chosenCharList == 'custom':
-    charListName = input('Name of custom character list (leave blank to not save the list): ')
-    fCharListFileName = f'{charListName}.charlist.bruteforce'
-    if isfile(fCharListFileName):
-        print('Loading custom character list...')
-        currentCharList = open(fCharListFileName, 'r').read()
-        print('Loaded')
-    else:
-        currentCharList = input('Enter characters: ')
-        if charListName != '':
-            print('Saving custom character list...')
-            with open(fCharListFileName, 'w') as f:
-                f.write(currentCharList)
-                f.close()
-            print(f'Saved custom character list as {fCharListFileName}')
-else:
-    i = 0
-    if chosenCharList != '': i = int(chosenCharList)
-    currentCharList = charLists[i]
 
-fListFileName = f'{maxletters}.list.bruteforce'
-
-if isfile(fListFileName):
-    print('Loading cached list...')
-    temp_passwords = []
-    with open(fListFileName, 'r') as f:
-        for line in f: temp_passwords.append(line)
-    print('Loaded')
-    print('Preparing...')
-    for password in tqdm(temp_passwords):
-        passwords.append(password.rstrip('\n'))
-    print('Prepared')
-else:
-    print('Generating list...')
-    \'\'\'
-    for current in range(maxletters):
-        a = [i for i in currentCharList]
-        for x in range(current):
-            a = [y + i for i in currentCharList for y in a]
-        passwords = passwords + a
-    \'\'\'
-    passwords = corefunctions.generate(charlist=currentCharList, maxletters=maxletters)
-    print('Generated list')
-    print('Saving list...')
-    with open(fListFileName, 'w') as f:
-        for password in tqdm(passwords):
-            f.write(password)
-            f.write('\n')
-        f.close()
-    print(f'List saved as {fListFileName}')
-'''
-temp_passwords: list[str] = []
+passwords: set[str] = set()
+temp_passwords: set[str] = set()
 
 if not sys.argv.__contains__('--use-list-file'):
     print('Phase 1: Load word lists --------')
@@ -86,8 +24,7 @@ if not sys.argv.__contains__('--use-list-file'):
             _list = open(f'wordlists/{file}', 'r').read()
             print('Loaded')
             print('Preparing...')
-            _list = _list.splitlines()
-            temp_passwords.extend(_list)
+            [temp_passwords.add(p) for p in _list.splitlines()]
             print('Prepared')
             del _list
     print('Phase 2: Keywords ---------------')
@@ -95,10 +32,10 @@ if not sys.argv.__contains__('--use-list-file'):
         keywords = open('keywords', 'r').read().splitlines()
         print('Putting all keywords into the list...')
         for keyword in tqdm(keywords, disable=False):
-            temp_passwords.append(keyword)
+            temp_passwords.add(keyword)
         print('Combining...')
         temp_combinations = permutations(keywords, 2)
-        temp_passwords.extend(map(lambda x: x[0] + x[1], temp_combinations))
+        [temp_passwords.add(i) for i in map(lambda x: x[0] + x[1], temp_combinations)]
         print('Combined')
     except FileNotFoundError:
         print('keywords file not found, skipping...')
@@ -115,8 +52,7 @@ else:
 
 print('Final phase: Finalization -------')
 print('Finalizing...')
-for password in tqdm(temp_passwords):
-    passwords.append(password)
+passwords = temp_passwords.copy()
 print('Finalized')
 del temp_passwords
 
