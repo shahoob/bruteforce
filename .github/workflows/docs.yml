@@ -1,0 +1,59 @@
+name: Build docs
+
+on:
+  push:
+    branches: [ master ]
+  workflow_dispatch:
+    inputs:
+      should-deploy:
+        description: 'Whether to deploy the built docs (yes) or not (no)'
+        required: false
+        default: 'no'
+      
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      
+      - name: Setup Python
+        uses: actions/setup-python@v2.2.1
+        with:
+          python-version: 3.x
+      
+      - run: pip install -r requirements-dev.txt
+      
+      - name: Build the docs
+        run: mkdocs build
+      
+      - name: Upload the built site
+        uses: actions/upload-artifact@v2.2.2
+        with:
+          name: docs
+          path: site
+      
+      - name: Deploy
+        if: github.event.inputs.should-deploy == 'yes'
+        run: mkdocs gh-deploy
+      
+  deploy:
+    runs-on: ubuntu-latest
+    
+    needs: [build]
+    steps:
+      - uses: actions/checkout@v2
+    
+      - name: Download a Build Artifact
+        uses: actions/download-artifact@v2.0.8
+        with:
+          name: docs
+      
+      - name: Setup Python
+        uses: actions/setup-python@v2.2.1
+        with:
+          python-version: 3.x
+      
+      
+        
