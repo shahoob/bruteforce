@@ -12,7 +12,7 @@ on:
       
 
 jobs:
-  build:
+  build-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
@@ -37,23 +37,6 @@ jobs:
       - name: Deploy
         if: github.event.inputs.should-deploy == 'yes'
         run: mkdocs gh-deploy
-      
-  deploy:
-    runs-on: ubuntu-latest
-    
-    needs: [build]
-    steps:
-      - uses: actions/checkout@v2
-    
-      - name: Download a Build Artifact
-        uses: actions/download-artifact@v2.0.8
-        with:
-          name: docs
-      
-      - name: Setup Python
-        uses: actions/setup-python@v2.2.1
-        with:
-          python-version: 3.x
       
       
         
