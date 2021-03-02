@@ -3,12 +3,14 @@ name: Build docs
 on:
   push:
     branches: [ master ]
+  pull_request:
+    branches: [ master ]
   workflow_dispatch:
     inputs:
       should-deploy:
         description: 'Whether to deploy the built docs (yes) or not (no)'
         required: false
-        default: 'no'
+        default: 'yes'
       
 
 jobs:
@@ -35,7 +37,7 @@ jobs:
           path: site
       
       - name: Deploy
-        if: github.event.inputs.should-deploy == 'yes'
+        if: github.event.inputs.should-deploy == 'yes' || github.event_name != 'pull_request'
         run: mkdocs gh-deploy
       
       
